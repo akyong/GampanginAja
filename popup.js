@@ -223,12 +223,18 @@ function openPdf(datasetKey) {
 
   filenameText.textContent = filename;
 
+  saveState({
+    dataset: datasetKey,
+    index: currentIndex
+  });
+
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs[0]) {
       chrome.tabs.update(tabs[0].id, { url });
     }
   });
 }
+
 
 /* ========= UI ========= */
 
@@ -237,6 +243,14 @@ function loadDataset(key) {
   currentIndex = ds.mode === "sequence" ? ds.start : 0;
   openPdf(key);
 }
+
+function saveState(state) {
+  chrome.storage.local.set({
+    lastState: state
+  });
+}
+
+
 
 Object.keys(DATASETS).forEach((k) => {
   const opt = document.createElement("option");
@@ -268,5 +282,22 @@ nextBtn.onclick = () => {
 };
 
 /* init */
-datasetSelect.value = "1";
-loadDataset("1");
+
+document.addEventListener("DOMContentLoaded", () => {
+  chrome.storage.local.get("lastState", (res) => {
+    if (res.lastState) {
+      const { dataset, index } = res.lastState;
+
+      datasetSelect.value = dataset;
+      currentIndex = index;
+
+      openPdf(dataset);
+    } else {
+      // fallback pertama kali install
+      datasetSelect.value = "1";
+      loadDataset("1");
+    }
+  });
+});
+
+
