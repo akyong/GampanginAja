@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Justice PDF Navigator",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Navigate DOJ PDF files easily",
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["tabs"]
+  "permissions": ["tabs", "storage"]
 }
